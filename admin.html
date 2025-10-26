@@ -128,6 +128,17 @@
         statusText.textContent = "❌ " + error.message;
       }
     });
+    <!-- Example footer placement -->
+<footer style="text-align:center; margin-top:3rem;">
+  <a href="admin.html" class="admin-btn">🔒 Admin Login</a>
+</footer>
+signInWithEmailAndPassword(auth, email, password)
+  .then(() => {
+    window.location = "dashboard.html"; // Redirect to dashboard after login
+  })
+  .catch(e => {
+    document.getElementById("status").textContent = e.message;
+  });
   </script>
 </body>
 </html>
