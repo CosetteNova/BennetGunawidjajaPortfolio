@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Investigative Journalism: The City's Hidden Economy",
+    "category": "Journalism",
+    "date": "2025-05-20",
+    "description": "An in-depth article examining the informal economy within metropolitan communities.",
+    "link": "articles/hidden-economy.html"
+  },
+  {
+    "title": "An Investigation into the Relationship Between Migration, Globalization and Income Inequality",
+    "category": "Academic",
+    "date": "2024-11-02",
+    "description": "Extended Essay submitted for IB Diploma Programme, exploring the relationship between migration, globalisation, and income inequality in South Tangerang, Indonesia.",
+    "link": "articles/migration-inequality.html"
+  },
+  {
+    "title": "Personal Portfolio Website (GitHub)",
+    "category": "Programming",
+    "date": "2025-01-10",
+    "description": "A responsive web portfolio built with HTML, CSS, and JavaScript.",
+    "link": "https://github.com/yourusername"
+  }
+]

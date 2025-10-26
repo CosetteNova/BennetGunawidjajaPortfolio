@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="asset/css/style.css">
+</head>
+<body>
+  <main style="max-width:600px;margin:auto;padding:2rem;">
+    <h1>Manage Portfolio</h1>
+    <input id="title" placeholder="Title"><br><br>
+    <input id="category" placeholder="Category"><br><br>
+    <textarea id="description" placeholder="Description"></textarea><br><br>
+    <input id="link" placeholder="Link"><br><br>
+    <button id="addWork" class="btn">Add Work</button>
+    <p id="msg"></p>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const firebaseConfig = { /* your config here */ };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const addBtn = document.getElementById("addWork");
+    const msg = document.getElementById("msg");
+
+    onAuthStateChanged(auth, user => {
+      if (!user) window.location = "admin.html"; // redirect if not logged in
+    });
+
+    addBtn.addEventListener("click", async () => {
+      const title = document.getElementById("title").value;
+      const category = document.getElementById("category").value;
+      const description = document.getElementById("description").value;
+      const link = document.getElementById("link").value;
+      const date = new Date().toISOString().split("T")[0];
+
+      try {
+        await addDoc(collection(db, "works"), { title, category, description, link, date });
+        msg.textContent = "✅ Work added successfully!";
+      } catch (err) {
+        msg.textContent = "❌ " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

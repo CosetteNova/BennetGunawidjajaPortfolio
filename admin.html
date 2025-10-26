@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="asset/css/style.css" />
+</head>
+<body>
+  <main style="text-align:center; padding:2rem;">
+    <h1>Admin Login</h1>
+    <input id="email" type="email" placeholder="Email"><br><br>
+    <input id="password" type="password" placeholder="Password"><br><br>
+    <button id="loginBtn" class="btn">Login</button>
+    <p id="status"></p>
+  </main>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const firebaseConfig = {const firebaseConfig = {
+  apiKey: "AIzaSyDHXzA7eeRT_1kmdlY66-XAPoZTMJh79aU",
+  authDomain: "cosettenovaportfolio.firebaseapp.com",
+  projectId: "cosettenovaportfolio",
+  storageBucket: "cosettenovaportfolio.firebasestorage.app",
+  messagingSenderId: "1030073219161",
+  appId: "1:1030073219161:web:101ac918a326f159a29948"
+};
+};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const loginBtn = document.getElementById("loginBtn");
+    loginBtn.addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => { window.location = "dashboard.html"; })
+        .catch(e => { document.getElementById("status").textContent = e.message; });
+    });
+  </script>
+</body>
+</html>
