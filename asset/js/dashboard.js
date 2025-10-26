@@ -1,162 +1,109 @@
-// ============================
-// Dashboard.js
-// ============================
-// Handles admin dashboard CRUD operations for portfolio works
-// Requires Firebase Auth + Firestore to be configured
-// ============================
-
-// --- Firebase Imports ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc
+import { 
+  getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc 
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut
+import { 
+  getAuth, onAuthStateChanged, signOut 
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// --- Firebase Config ---
-// 🔧 Replace this with your actual Firebase project config
+// 🔥 Firebase Config (replace with your own safely!)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MSG_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDHXzA7eeRT_1kmdlY66-XAPoZTMJh79aU",
+  authDomain: "cosettenovaportfolio.firebaseapp.com",
+  projectId: "cosettenovaportfolio",
+  storageBucket: "cosettenovaportfolio.firebasestorage.app",
+  messagingSenderId: "1030073219161",
+  appId: "1:1030073219161:web:101ac918a326f159a29948"
 };
 
-// --- Initialize Firebase ---
+// Initialize
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// --- DOM References ---
-const addBtn = document.getElementById("addWork");
-const msg = document.getElementById("msg");
-const worksTableBody = document.getElementById("worksTableBody");
 const logoutBtn = document.getElementById("logoutBtn");
-const adminEmailDisplay = document.getElementById("adminEmail");
+const msg = document.getElementById("msg");
+const worksTable = document.getElementById("worksTable");
+const addForm = document.getElementById("addForm");
 
-// --- Auth Guard ---
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    adminEmailDisplay.textContent = user.email;
-    loadWorks();
-  } else {
-    window.location = "admin.html"; // redirect if not logged in
-  }
+// 🔒 Auth Guard
+onAuthStateChanged(auth, user => {
+  if (!user) window.location = "admin.html";
+  else loadWorks();
 });
 
-// --- Logout Functionality ---
+// 🚪 Logout
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
   window.location = "admin.html";
 });
 
-// ============================
-// CRUD FUNCTIONS
-// ============================
-
-// --- Load All Works ---
-async function loadWorks() {
-  worksTableBody.innerHTML = "";
-  const querySnapshot = await getDocs(collection(db, "works"));
-  querySnapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-    const row = document.createElement("tr");
-
-    row.innerHTML = `
-      <td><input type="text" value="${data.title || ""}" data-field="title" /></td>
-      <td><input type="text" value="${data.category || ""}" data-field="category" /></td>
-      <td><textarea data-field="description">${data.description || ""}</textarea></td>
-      <td><input type="url" value="${data.link || ""}" data-field="link" /></td>
-      <td class="actions">
-        <button class="save-btn" data-id="${docSnap.id}">Save</button>
-        <button class="delete-btn" data-id="${docSnap.id}">Delete</button>
-      </td>
-    `;
-
-    worksTableBody.appendChild(row);
-  });
-
-  attachRowEventListeners();
-}
-
-// --- Add New Work ---
-addBtn.addEventListener("click", async () => {
+// ➕ Add Work
+addForm.addEventListener("submit", async e => {
+  e.preventDefault();
   const title = document.getElementById("title").value.trim();
   const category = document.getElementById("category").value.trim();
   const description = document.getElementById("description").value.trim();
   const link = document.getElementById("link").value.trim();
-  const date = new Date().toISOString().split("T")[0];
 
-  if (!title || !category || !link) {
-    msg.textContent = "⚠️ Please fill in required fields (Title, Category, Link)";
-    msg.style.color = "#facc15"; // yellow warning
+  if (!title || !category) {
+    msg.textContent = "⚠️ Title and Category required.";
     return;
   }
 
   try {
-    await addDoc(collection(db, "works"), { title, category, description, link, date });
-    msg.textContent = "✅ Work added successfully!";
-    msg.style.color = "#22c55e"; // green success
-    document.getElementById("title").value = "";
-    document.getElementById("category").value = "";
-    document.getElementById("description").value = "";
-    document.getElementById("link").value = "";
+    await addDoc(collection(db, "works"), {
+      title, category, description, link,
+      date: new Date().toISOString().split("T")[0]
+    });
+    msg.textContent = "✅ Work added!";
+    addForm.reset();
     loadWorks();
   } catch (err) {
     msg.textContent = "❌ " + err.message;
-    msg.style.color = "#ef4444"; // red error
   }
 });
 
-// --- Attach Edit/Delete Buttons ---
-function attachRowEventListeners() {
-  // Edit/Save
-  document.querySelectorAll(".save-btn").forEach((btn) => {
-    btn.addEventListener("click", async (e) => {
-      const id = e.target.dataset.id;
-      const row = e.target.closest("tr");
-      const updatedData = {};
-      row.querySelectorAll("[data-field]").forEach((input) => {
-        updatedData[input.dataset.field] = input.value.trim();
-      });
-
-      try {
-        await updateDoc(doc(db, "works", id), updatedData);
-        msg.textContent = "✅ Work updated successfully!";
-        msg.style.color = "#22c55e";
-      } catch (err) {
-        msg.textContent = "❌ " + err.message;
-        msg.style.color = "#ef4444";
-      }
-    });
+// 📋 Load Works
+async function loadWorks() {
+  worksTable.innerHTML = "";
+  const querySnapshot = await getDocs(collection(db, "works"));
+  querySnapshot.forEach(docSnap => {
+    const work = docSnap.data();
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td contenteditable="true" data-field="title">${work.title}</td>
+      <td contenteditable="true" data-field="category">${work.category}</td>
+      <td contenteditable="true" data-field="description">${work.description}</td>
+      <td contenteditable="true" data-field="link">${work.link || ""}</td>
+      <td>
+        <button class="edit-btn" data-id="${docSnap.id}">💾</button>
+        <button class="delete-btn" data-id="${docSnap.id}">🗑️</button>
+      </td>
+    `;
+    worksTable.appendChild(tr);
   });
 
   // Delete
-  document.querySelectorAll(".delete-btn").forEach((btn) => {
-    btn.addEventListener("click", async (e) => {
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.addEventListener("click", async e => {
       const id = e.target.dataset.id;
-      if (confirm("Are you sure you want to delete this work?")) {
-        try {
-          await deleteDoc(doc(db, "works", id));
-          msg.textContent = "🗑️ Work deleted.";
-          msg.style.color = "#f97316"; // orange
-          loadWorks();
-        } catch (err) {
-          msg.textContent = "❌ " + err.message;
-          msg.style.color = "#ef4444";
-        }
-      }
+      await deleteDoc(doc(db, "works", id));
+      loadWorks();
+    });
+  });
+
+  // Edit
+  document.querySelectorAll(".edit-btn").forEach(btn => {
+    btn.addEventListener("click", async e => {
+      const id = e.target.dataset.id;
+      const row = e.target.closest("tr");
+      const updatedData = {};
+      row.querySelectorAll("[contenteditable=true]").forEach(cell => {
+        updatedData[cell.dataset.field] = cell.textContent.trim();
+      });
+      await updateDoc(doc(db, "works", id), updatedData);
+      msg.textContent = "✅ Updated successfully!";
     });
   });
 }

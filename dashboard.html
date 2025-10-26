@@ -1,53 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="asset/css/style.css">
+  <link rel="stylesheet" href="asset/css/style.css" />
+  <style>
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      color: #e6edf3;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .logout-btn {
+      background: #f85149;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 2rem;
+      align-self: flex-end;
+    }
+
+    .logout-btn:hover {
+      background: #da3633;
+    }
+
+    form {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.6rem;
+      margin: 0.6rem 0;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      background: #0d1117;
+      color: #e6edf3;
+      font-size: 1rem;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #58a6ff;
+      outline: none;
+    }
+
+    .btn {
+      background: #238636;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #2ea043;
+    }
+
+    #msg {
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    table {
+      width: 100%;
+      max-width: 800px;
+      border-collapse: collapse;
+      background: #161b22;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #30363d;
+      text-align: left;
+    }
+
+    th {
+      background: #1c2128;
+      color: #e6edf3;
+    }
+
+    tr:hover {
+      background: #21262d;
+    }
+
+    .edit-btn, .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #58a6ff;
+      font-weight: bold;
+    }
+
+    .delete-btn {
+      color: #f85149;
+    }
+  </style>
 </head>
 <body>
-  <main style="max-width:600px;margin:auto;padding:2rem;">
-    <h1>Manage Portfolio</h1>
-    <input id="title" placeholder="Title"><br><br>
-    <input id="category" placeholder="Category"><br><br>
-    <textarea id="description" placeholder="Description"></textarea><br><br>
-    <input id="link" placeholder="Link"><br><br>
-    <button id="addWork" class="btn">Add Work</button>
+  <button class="logout-btn" id="logoutBtn">Logout</button>
+  <h1>Admin Dashboard</h1>
+
+  <form id="addForm">
+    <input id="title" placeholder="Title" required />
+    <input id="category" placeholder="Category" required />
+    <textarea id="description" placeholder="Description" rows="3"></textarea>
+    <input id="link" placeholder="Link (optional)" />
+    <button type="submit" class="btn">Add Work</button>
     <p id="msg"></p>
-  </main>
+  </form>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Link</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="worksTable"></tbody>
+  </table>
 
-    const firebaseConfig = { /* your config here */ };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    const addBtn = document.getElementById("addWork");
-    const msg = document.getElementById("msg");
-
-    onAuthStateChanged(auth, user => {
-      if (!user) window.location = "admin.html"; // redirect if not logged in
-    });
-
-    addBtn.addEventListener("click", async () => {
-      const title = document.getElementById("title").value;
-      const category = document.getElementById("category").value;
-      const description = document.getElementById("description").value;
-      const link = document.getElementById("link").value;
-      const date = new Date().toISOString().split("T")[0];
-
-      try {
-        await addDoc(collection(db, "works"), { title, category, description, link, date });
-        msg.textContent = "✅ Work added successfully!";
-      } catch (err) {
-        msg.textContent = "❌ " + err.message;
-      }
-    });
-  </script>
+  <script type="module" src="asset/js/dashboard.js"></script>
 </body>
 </html>

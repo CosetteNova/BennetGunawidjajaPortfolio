@@ -7,32 +7,55 @@
   <link rel="stylesheet" href="asset/css/style.css" />
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #fafafa;
+      font-family: 'Inter', Arial, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
+
     main {
-      text-align: center;
-      background: white;
-      padding: 2rem;
+      background: #161b22;
+      border: 1px solid #30363d;
       border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 300px;
+      padding: 2rem;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
+
+    h1 {
+      margin-bottom: 1rem;
+      color: #e6edf3;
+      font-size: 1.5rem;
+    }
+
     input {
       width: 100%;
-      padding: 0.5rem;
-      margin: 0.5rem 0;
-      border: 1px solid #ccc;
+      padding: 0.6rem;
+      margin: 0.6rem 0;
+      border: 1px solid #30363d;
       border-radius: 8px;
+      background: #0d1117;
+      color: #e6edf3;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, background 0.3s ease;
     }
+
+    input:focus {
+      outline: none;
+      border-color: #58a6ff;
+      background: #161b22;
+    }
+
     .btn {
       width: 100%;
-      padding: 0.6rem;
-      background: #007bff;
+      padding: 0.7rem;
+      margin-top: 0.5rem;
+      background: #238636;
       color: white;
       border: none;
       border-radius: 8px;
@@ -40,13 +63,16 @@
       font-weight: bold;
       transition: background 0.3s ease;
     }
+
     .btn:hover {
-      background: #0056b3;
+      background: #2ea043;
     }
+
     #status {
       margin-top: 1rem;
-      color: #d00;
       font-size: 0.9rem;
+      color: #f85149;
+      min-height: 1.2rem;
     }
   </style>
 </head>
@@ -60,11 +86,9 @@
   </main>
 
   <script type="module">
-    // Firebase imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-    // ✅ Replace with your Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDHXzA7eeRT_1kmdlY66-XAPoZTMJh79aU",
       authDomain: "cosettenovaportfolio.firebaseapp.com",
@@ -74,11 +98,9 @@
       appId: "1:1030073219161:web:101ac918a326f159a29948"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Login button logic
     const loginBtn = document.getElementById("loginBtn");
     const statusText = document.getElementById("status");
 
@@ -92,15 +114,17 @@
       }
 
       statusText.textContent = "Logging in...";
+      statusText.style.color = "#8b949e";
+
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        statusText.style.color = "green";
+        statusText.style.color = "#3fb950";
         statusText.textContent = "✅ Login successful! Redirecting...";
         setTimeout(() => {
           window.location.href = "dashboard.html";
         }, 1000);
       } catch (error) {
-        statusText.style.color = "#d00";
+        statusText.style.color = "#f85149";
         statusText.textContent = "❌ " + error.message;
       }
     });
